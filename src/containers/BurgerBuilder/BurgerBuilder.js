@@ -23,6 +23,7 @@ class BurgerBuilder extends Component {
     state = {
         ingredients: null,
         totalPrice: 20,
+        customerName: "",
         purchaseable: false,
         purchasing: false,
         loading: false,
@@ -83,36 +84,37 @@ class BurgerBuilder extends Component {
     purchaseHandler = () => {
         this.setState({ purchasing: true });
     }
-    purchaseCancelHandeler = () => {
-        this.setState({ purchasing: false })
+    purchaseCancelHandler = () => {
+        this.setState({ purchasing: false });
+    }
+
+    customerNameHandler = (customerName) => {
+        this.setState({ customerName: customerName.target.value })
     }
 
     purchaseContinueHandler = () => {
         //alert('Wohoo, You continued!. But dont be so happy you dont really ordered a burger :p');
-        this.setState({ loading: true });
+        if (this.state.customerName.trim() === "") {
+            alert('Come on, Why so rude? Tell me your name.');
+        } else {
 
-        const order = {
-            ingredients: this.state.ingredients,
-            price: this.state.totalPrice,
-            customer: {
-                name: 'Akash Rajput',
-                address: {
-                    street: 'Fake Street',
-                    zipcode: '151001',
-                    country: 'India'
-                },
-                email: 'testmail@test.com',
-            },
-            deliveryMethod: 'fastest'
+            this.setState({ loading: true });
+
+            const order = {
+                ingredients: this.state.ingredients,
+                price: this.state.totalPrice,
+                customerName: this.state.customerName
+            }
+
+            axios.post('/orders.json', order)
+                .then(response => {
+                    this.setState({ loading: false, purchasing: false });
+                })
+                .catch(error => {
+                    this.setState({ loading: false, purchasing: false });
+                });
         }
-
-        axios.post('/orders.json', order)
-            .then(response => {
-                this.setState({ loading: false, purchasing: false });
-            })
-            .catch(error => {
-                this.setState({ loading: false, purchasing: false });
-            });
+        this.setState({ customerName: "" });
     }
 
     render() {
@@ -146,8 +148,11 @@ class BurgerBuilder extends Component {
             orderSummary = <OrderSummary
                 totalPrice={this.state.totalPrice}
                 ingredients={this.state.ingredients}
-                purchaseCancelled={this.purchaseCancelHandeler}
-                purchaseContinued={this.purchaseContinueHandler} />;
+                purchaseCancelled={this.purchaseCancelHandler}
+                purchaseContinued={this.purchaseContinueHandler}
+                customerName={this.customerNameHandler}
+                valueCustomerInput={this.state.customerName}
+            />;
         }
         if (this.state.loading) {
             orderSummary = <Spinner />;
@@ -156,7 +161,7 @@ class BurgerBuilder extends Component {
             <Auxiliary>
                 <Modal
                     show={this.state.purchasing}
-                    modalClosed={this.purchaseCancelHandeler}>
+                    modalClosed={this.purchaseCancelHandler}>
                     {orderSummary}
                 </Modal>
                 {burger}
