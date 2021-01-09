@@ -109,9 +109,11 @@ class BurgerBuilder extends Component {
             axios.post('/orders.json', order)
                 .then(response => {
                     this.setState({ loading: false, purchasing: false });
-                    setTimeout(() => {
-                        alert('Wohoo! You did it. Thankyou.');
-                    }, 1000);
+                    if (response) {
+                        setTimeout(() => {
+                            alert('Wohoo! You did it. Thankyou.')
+                        }, 1000);
+                    }
                 })
                 .catch(error => {
                     this.setState({ loading: false, purchasing: false });
