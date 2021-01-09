@@ -17,6 +17,7 @@
 .NavigationItem a:active,
 .NavigationItem a.active {
   border-right: 4px solid #40a4c8;
+  border-radius: 0 50px 50px 0px;
   color: #40a4c8;
 }
 
