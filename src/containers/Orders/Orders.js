@@ -17,11 +17,14 @@ class Orders extends Component {
         let orders = <Spinner />
         if (!this.props.loading) {
             orders = this.props.orders.map(order => (
-                <Order
-                    key={order.id}
-                    ingredients={order.ingredients}
-                    price={order.price} />
-            ))
+                //order === '' ? <center>No orders</center> :
+                < div >
+                    <center>Your Orders</center>
+                    <Order
+                        key={order.id}
+                        ingredients={order.ingredients}
+                        price={order.price} />
+                </div >))
         }
         return (
             <div>
